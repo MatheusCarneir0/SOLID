@@ -1,0 +1,41 @@
+from pydantic import BaseModel, field_validator
+import re
+
+class Phone(BaseModel):
+    country_code: str
+    phone_number: str
+    area_code: str
+    
+    @field_validator('country_code')
+    def _only_digits(cls, value: str) -> str:
+        value = re.sub(pattern='[^0-9]', repl='', string=value)
+        if not value:
+            raise ValueError('Country code must contain only digits.')
+        return value
+
+    @field_validator('country_code')
+    def _validate_country_code(cls, value: str) -> str:
+        if not (1 <= len(value) <= 3):
+            raise ValueError('Country code must be between 1 and 3 digits long.')
+        return value
+    
+    @field_validator('area_code')
+    def _validate_area_code(cls, value: str) -> str:
+        if not (1 <= len(value) <= 3):
+            raise ValueError('Area code must be between 1 and 3 digits long.')
+        return value
+    
+    @field_validator('phone_number')
+    def _validate_phone_number(cls, value: str) -> str:
+        if not (8 <= len(value) <= 9):
+            raise ValueError('Phone number must be between 8 and 9 digits long.')
+        return value
+    
+    def format_with_area_code(self) -> str:
+        return f"({self.area_code}) {self.phone_number}"
+    
+    def format_phone_number_complete(self) -> str:
+        return f"+{self.country_code} ({self.area_code}) {self.phone_number}"
+    
+    def get_all_numbers(self) -> str:
+        return f"{self.country_code}{self.area_code}{self.phone_number}"
