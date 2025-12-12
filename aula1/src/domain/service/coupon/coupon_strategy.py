@@ -22,3 +22,5 @@ class NatalCoupon(CouponStrategy):
         if value < 800:
             raise ValueError("Valor mínimo para aplicar cupom de Natal é 800.")
         return value * 0.3
+    
+    "teste"
